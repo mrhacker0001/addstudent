@@ -1,0 +1,81 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+.wrapper {
+    width: 100%;
+    height: 100%;
+}
+.students {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+form {
+    width: 400px;
+    height: 600px;
+    background-color: rgb(3, 13, 13);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    gap: 30px;
+    position: absolute;
+    top: 20%;
+    right: 0;
+}
+form input {
+    width: 300px;
+    height: 40px;
+    text-align: center;
+    outline: none;
+    font-size: 20px;
+}
+form p{
+    color: #fff;
+}
+.btns {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+.btns button {
+    width: 130px;
+    height: 40px;
+    border-radius: 15px;
+    background-color: red;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+
+}
+table {
+    text-align: center;
+background-color: aquamarine;    
+width: 75%;
+}
+
+.btn3{
+ width: 70px;
+ background-color: rgb(243, 193, 56);
+ border: none;
+}
+.btn3:active{
+    background-color:rgb(129, 95, 27) ;
+}
+.btn2 {
+    width: 70px;
+    background-color: rgb(243, 193, 56);
+    border: none;
+
+}
+.btn2:active {
+    background-color: rgb(129, 95, 27);
+}
+.trouble{
+    width: 200px;
+}
