@@ -1,122 +1,148 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 function Student() {
   const [students, setStudents] = useState([]);
-  const [formData, setFormData] = useState({ ism: '', fam: '', tel: '' });
   const [editIndex, setEditIndex] = useState(null);
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { ism: "", fam: "", tel: "" },
+  });
+
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('key')) || [];
+    const storedData = JSON.parse(localStorage.getItem("key")) || [];
     setStudents(storedData);
   }, []);
 
   const formClose = () => {
     setEditIndex(null);
+    reset();
   };
 
-  console.log({formData});
-
-  const talabaQoshish = (data) => {
-    data.id = Math.random() + students.length;
-    if (data.ism.trim() === '' || data.fam.trim() === '' || data.tel.trim() === '') {
-      alert('Iltimos, barcha maydonlarni to\'ldiring.');
+  const onCreateStudent = (data) => {
+    if (
+      data.ism.trim() === "" ||
+      data.fam.trim() === "" ||
+      data.tel.trim() === ""
+    ) {
+      alert("Iltimos, barcha maydonlarni to'ldiring.");
       return;
     }
-
-    const updatedStudents = [...students];
-    if (editIndex !== null) {
-      updatedStudents[editIndex] = data;
+    if (!editIndex) {
+      data.id = Math.random() + students.length;
+      setStudents([...students, data]);
+      localStorage.setItem("key", JSON.stringify([...students, data]));
     } else {
-      updatedStudents.push(data);
+      setStudents(
+        students.map((item) => {
+          if (item?.id === editIndex) {
+            return data;
+          }
+          return item;
+        })
+      );
+      localStorage.setItem(
+        "key",
+        JSON.stringify(
+          students.map((item) => {
+            if (item?.id === data?.id) {
+              return data;
+            }
+            return item;
+          })
+        )
+      );
     }
-    setStudents(updatedStudents);
-    localStorage.setItem('key', JSON.stringify(updatedStudents));
     formClose();
-
   };
 
   const talabaTahrirlash = (id) => {
-    setFormData(students?.find(item=> item?.id === id));
+    const isStudent = students?.find((item) => item?.id === id);
+    Object.keys(isStudent).forEach((key) => {
+      setValue(key, isStudent[key]);
+    });
+    // isStudent.ism && isStudent.fam && isStudent.tel  => [ism, fam, tel]
     setEditIndex(id);
   };
 
   const talabaOchirish = (id) => {
     const updatedStudents = students.filter((item) => item?.id !== id);
     setStudents(updatedStudents);
-    localStorage.setItem('key', JSON.stringify(updatedStudents));
+    localStorage.setItem("key", JSON.stringify(updatedStudents));
   };
 
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm();
-
   return (
-    <div className='Student'>
+    <div className="Student">
       <div className="wrapper">
-
-
         <div className="students">
-          <form onSubmit={handleSubmit(talabaQoshish)}>
+          <form onSubmit={handleSubmit(onCreateStudent)}>
             <label>
               <input
-                defaultValue={formData?.ism}
                 {...register("ism", {
                   required: true,
                   minLength: 3,
                   pattern: /^[a-z]+$/i,
                 })}
-                onChange={(e) => setFormData({ ...formData, ism: e.target.value })}
                 placeholder="Ismingizni kiriting"
                 type="text"
               />
-              {errors.ism && (<p>
-                {errors.ism.type === "pattern" ? "Sonlar kiritilmasligi shart" : "Ushbu maydon to'ldirilishi shart"}
-              </p>)}
+              {errors.ism && (
+                <p>
+                  {errors.ism.type === "pattern"
+                    ? "Sonlar kiritilmasligi shart"
+                    : "Ushbu maydon to'ldirilishi shart"}
+                </p>
+              )}
             </label>
 
             <label>
               <input
-                defaultValue={formData?.fam}
                 {...register("fam", {
                   required: true,
                   minLength: 3,
                   pattern: /^[a-z]+$/i,
                 })}
-                onChange={(e) => setFormData({ ...formData, fam: e.target.value })}
                 placeholder="Familiyangizni kiriting"
                 type="text"
               />
-              {errors.fam && (<p>
-                {errors.fam.type === "pattern" ? "Sonlar kiritilmasligi shart" : "Ushbu maydon to'ldirilishi shart"}
-              </p>)}
-
+              {errors.fam && (
+                <p>
+                  {errors.fam.type === "pattern"
+                    ? "Sonlar kiritilmasligi shart"
+                    : "Ushbu maydon to'ldirilishi shart"}
+                </p>
+              )}
             </label>
 
             <label>
               <input
-                defaultValue={formData?.tel}
                 {...register("tel", {
                   required: true,
                   minLength: 3,
                   pattern: /^[0-9]+$/i,
                 })}
-                onChange={(e) => setFormData({ ...formData, tel: e.target.value })}
                 placeholder="Telefon raqamingizni kiriting"
                 type="text"
               />
               {errors.tel && (
                 <p>
-                  {errors.tel.type === "pattern" ? "Harflar kiritilmasligi shart" : "Ushbu maydon to'ldirilishi shart"}
+                  {errors.tel.type === "pattern"
+                    ? "Harflar kiritilmasligi shart"
+                    : "Ushbu maydon to'ldirilishi shart"}
                 </p>
               )}
             </label>
 
             <div className="btns">
-              <button type="submit">{editIndex !== null ? 'Yangilash' : 'Qo\'shish'}</button>
+              <button type="submit">
+                {editIndex !== null ? "Yangilash" : "Qo'shish"}
+              </button>
             </div>
           </form>
         </div>
@@ -139,8 +165,18 @@ function Student() {
                 <td>{student.fam}</td>
                 <td>{student.tel}</td>
                 <td id="action">
-                  <button onClick={() => talabaOchirish(student?.id)} className="btn2">O'chirish</button>
-                  <button onClick={() => talabaTahrirlash(student?.id)} className="btn3">Tahrirlash</button>
+                  <button
+                    onClick={() => talabaOchirish(student?.id)}
+                    className="btn2"
+                  >
+                    O'chirish
+                  </button>
+                  <button
+                    onClick={() => talabaTahrirlash(student?.id)}
+                    className="btn3"
+                  >
+                    Tahrirlash
+                  </button>
                 </td>
               </tr>
             ))}
